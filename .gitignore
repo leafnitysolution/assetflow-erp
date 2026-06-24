@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables — NEVER commit secrets
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# macOS
+.DS_Store
+*.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MongoDB local data (not needed — project now uses Supabase)
+.mongodb-data/
+.mongodb-log/
+*.tgz
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript build info
+*.tsbuildinfo
+
+# OS thumbnails
+Thumbs.db
+
+# Supabase local dev (if used)
+.supabase/
