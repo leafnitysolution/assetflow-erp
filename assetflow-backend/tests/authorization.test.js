@@ -1,3 +1,4 @@
+require('dotenv').config()
 const request = require('supertest')
 const bcrypt = require('bcryptjs')
 
@@ -127,6 +128,48 @@ describe('role-based authorization', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ content: 'I should not be able to comment here' })
       .expect(403)
+  })
+
+  test('assigned technicians (even with member role) can view, comment, and update status of their assigned tickets', async () => {
+    const technician = await user({ email: `tech-${Date.now()}@example.com`, name: 'Tech Member', role: 'member' })
+    const member     = await user({ email: `member-${Date.now()}@example.com`, name: 'Reporter Member', role: 'member' })
+    const userTicket = await ticket({ title: 'Broken chair', description: 'Chair leg is broken', type: 'issue', createdById: member.id, createdByName: member.name })
+    
+    // Assign ticket to technician using Supabase
+    await supabase.from('tickets').update({ assigned_to: technician.id, assigned_to_name: technician.name, status: 'assigned' }).eq('id', userTicket.id)
+    
+    const token = await login(technician.email)
+
+    // Technician should be able to view the ticket
+    await request(app)
+      .get(`/api/tickets/${userTicket.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+
+    // Technician should be able to comment on the ticket
+    await request(app)
+      .post(`/api/tickets/${userTicket.id}/comments`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ content: 'I am on my way to fix this' })
+      .expect(200)
+
+    // Technician should be able to update status
+    const putResp = await request(app)
+      .put(`/api/tickets/${userTicket.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'in-progress' })
+      .expect(200)
+    
+    expect(putResp.body.status).toBe('in-progress')
+
+    // Technician should NOT be able to update other fields, e.g., title
+    const putTitleResp = await request(app)
+      .put(`/api/tickets/${userTicket.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Hacked Title' })
+      .expect(200)
+    
+    expect(putTitleResp.body.title).not.toBe('Hacked Title') // Field update ignored
   })
 
   test('members cannot spoof ticket ownership while creating tickets', async () => {

@@ -62,12 +62,12 @@ export function SuperAdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-bold">Super Admin Dashboard</h1>
-          <p className="text-muted-foreground">System-wide monitoring and control</p>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold">Super Admin Dashboard</h1>
+          <p className="text-muted-foreground text-sm">System-wide monitoring and control</p>
         </div>
-        <Button variant="outline">
+        <Button variant="outline" className="w-fit">
           <Activity className="mr-2 h-4 w-4" />
           System Health: 98.5%
         </Button>

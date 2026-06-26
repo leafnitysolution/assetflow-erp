@@ -62,6 +62,8 @@ export function TicketDetail() {
 
   const ticket = tickets.find((t) => t.id === id)
   const isAdmin = user?.role === "admin" || user?.role === "super-admin"
+  const isAssignee = ticket?.assignedTo && String(ticket.assignedTo) === String(user?.id)
+  const canUpdateStatus = isAdmin || isAssignee
 
   const [comment, setComment] = useState("")
   const [submittingComment, setSubmittingComment] = useState(false)
@@ -168,7 +170,7 @@ export function TicketDetail() {
             </p>
           </div>
         </div>
-        {isAdmin && !isResolved && (
+        {canUpdateStatus && !isResolved && (
           <Button onClick={handleResolve} disabled={resolving} className="shrink-0">
             {resolving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
             Mark Resolved
@@ -255,7 +257,7 @@ export function TicketDetail() {
               {/* Status */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Status</label>
-                {isAdmin ? (
+                {canUpdateStatus ? (
                   <Select value={ticket.status} onValueChange={handleStatusChange} disabled={updatingStatus}>
                     <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -301,8 +303,8 @@ export function TicketDetail() {
                       <SelectValue placeholder="Unassigned" />
                     </SelectTrigger>
                     <SelectContent>
-                      {users.filter((u) => u.role !== "member").map((u) => (
-                        <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                      {users.map((u) => (
+                        <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

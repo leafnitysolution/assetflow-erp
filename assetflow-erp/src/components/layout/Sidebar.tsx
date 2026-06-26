@@ -20,10 +20,13 @@ import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/stores/authStore"
 import { useTicketStore } from "@/stores/ticketStore"
 import type { UserRole } from "@/types"
+import { Logo } from "./Logo"
 
 interface SidebarProps {
   collapsed: boolean
   onToggle: () => void
+  mobileOpen?: boolean
+  onCloseMobile?: () => void
 }
 
 interface NavItem {
@@ -60,7 +63,7 @@ const navItems: NavItem[] = [
   { label: "Settings", path: "/settings", icon: Settings, roles: ["admin", "super-admin", "member"] },
 ]
 
-export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, mobileOpen, onCloseMobile }: SidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
@@ -79,32 +82,46 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-secondary border-r border-border transition-all duration-300 flex flex-col",
-        collapsed ? "w-20" : "w-64"
+        "fixed left-0 top-0 z-50 h-screen bg-secondary border-r border-border transition-all duration-300 flex flex-col",
+        "w-64 -translate-x-full md:translate-x-0 md:flex",
+        mobileOpen && "translate-x-0",
+        collapsed ? "md:w-20" : "md:w-64"
       )}
     >
       <div className="flex h-16 items-center justify-between border-b border-border px-4">
-        {!collapsed && (
+        {(!collapsed || mobileOpen) && (
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Package className="h-5 w-5 text-white" />
+              <Logo className="h-6 w-6 text-white" />
             </div>
             <span className="font-heading font-bold text-lg text-white">
               AssetFlow
             </span>
           </div>
         )}
-        {collapsed && (
+        {collapsed && !mobileOpen && (
           <div className="mx-auto h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <Package className="h-5 w-5 text-white" />
+            <Logo className="h-6 w-6 text-white" />
           </div>
         )}
+        
+        {/* Mobile close button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onCloseMobile}
+          className="text-white hover:bg-white/10 md:hidden"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {/* Desktop collapse button */}
         <Button
           variant="ghost"
           size="icon"
           onClick={onToggle}
           className={cn(
-            "text-white hover:bg-white/10",
+            "text-white hover:bg-white/10 hidden md:inline-flex",
             collapsed && "hidden"
           )}
         >
@@ -121,17 +138,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <Link
               key={item.path}
               to={item.path}
+              onClick={onCloseMobile}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-white"
                   : "text-gray-400 hover:bg-white/5 hover:text-white",
-                collapsed && "justify-center px-2"
+                collapsed && "md:justify-center md:px-2",
+                mobileOpen && "justify-start px-3"
               )}
             >
-              <Icon className={cn("h-5 w-5 flex-shrink-0", collapsed && "h-6 w-6")} />
-              {!collapsed && <span className="flex-1">{item.label}</span>}
-              {!collapsed && (item.path === "/tickets" || item.path === "/member/tickets") && openTickets > 0 && (
+              <Icon className={cn("h-5 w-5 flex-shrink-0", (collapsed && !mobileOpen) && "md:h-6 md:w-6")} />
+              {(!collapsed || mobileOpen) && <span className="flex-1">{item.label}</span>}
+              {(!collapsed || mobileOpen) && (item.path === "/tickets" || item.path === "/member/tickets") && openTickets > 0 && (
                 <span className="ml-auto bg-danger text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
                   {openTickets}
                 </span>
@@ -146,12 +165,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           variant="ghost"
           className={cn(
             "w-full justify-start gap-3 text-gray-400 hover:bg-white/5 hover:text-white",
-            collapsed && "justify-center px-2"
+            (collapsed && !mobileOpen) && "md:justify-center md:px-2",
+            mobileOpen && "justify-start px-3"
           )}
-          onClick={handleLogout}
+          onClick={() => {
+            handleLogout()
+            if (onCloseMobile) onCloseMobile()
+          }}
         >
           <LogOut className="h-5 w-5" />
-          {!collapsed && <span>Logout</span>}
+          {(!collapsed || mobileOpen) && <span>Logout</span>}
         </Button>
       </div>
     </aside>

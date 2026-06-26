@@ -1,4 +1,4 @@
-import { Search, Bell, ScanLine, User } from "lucide-react"
+import { Search, Bell, ScanLine, User, Menu } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,9 +17,10 @@ import { cn } from "@/lib/utils"
 
 interface HeaderProps {
   className?: string
+  onMenuToggle?: () => void
 }
 
-export function Header({ className }: HeaderProps) {
+export function Header({ className, onMenuToggle }: HeaderProps) {
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
 
@@ -38,7 +39,16 @@ export function Header({ className }: HeaderProps) {
 
   return (
     <header className={cn("sticky top-0 z-30 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60", className)}>
-      <div className="flex h-full items-center gap-4 px-6">
+      <div className="flex h-full items-center gap-4 px-4 md:px-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden text-muted-foreground mr-1"
+          onClick={onMenuToggle}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+
         <div className="flex flex-1 items-center gap-4">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

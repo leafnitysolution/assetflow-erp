@@ -26,16 +26,16 @@ export function MemberDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-bold">
+          <h1 className="font-heading text-2xl md:text-3xl font-bold">
             Welcome back, {user?.name?.split(" ")[0]}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Here's what's happening with your assets
           </p>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="w-fit">
           <Link to="/scanner">
             <QrCode className="mr-2 h-4 w-4" />
             Scan QR

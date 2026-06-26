@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Eye, EyeOff, Package, Loader2 } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuthStore } from "@/stores/authStore"
+import { Logo } from "@/components/layout/Logo"
 
 export function Login() {
   const navigate = useNavigate()
@@ -48,7 +49,7 @@ export function Login() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary mb-4">
-            <Package className="h-8 w-8 text-white" />
+            <Logo className="h-10 w-10 text-white" />
           </div>
           <h1 className="font-heading text-3xl font-bold text-foreground">
             AssetFlow ERP

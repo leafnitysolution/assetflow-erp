@@ -48,9 +48,15 @@ async function _commentsFor(ticketIds) {
   return data || []
 }
 
-async function list({ createdBy } = {}) {
+async function list({ createdBy, assignedTo } = {}) {
   let q = supabase.from('tickets').select('*').order('created_at', { ascending: false })
-  if (createdBy) q = q.eq('created_by', createdBy)
+  if (createdBy && assignedTo) {
+    q = q.or(`created_by.eq.${createdBy},assigned_to.eq.${assignedTo}`)
+  } else if (createdBy) {
+    q = q.eq('created_by', createdBy)
+  } else if (assignedTo) {
+    q = q.eq('assigned_to', assignedTo)
+  }
   const { data, error } = await q
   if (error) throw error
   const rows = data || []

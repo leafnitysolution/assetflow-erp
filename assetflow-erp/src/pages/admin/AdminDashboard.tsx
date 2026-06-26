@@ -62,12 +62,12 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage your organization's assets and operations</p>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-muted-foreground text-sm">Manage your organization's assets and operations</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Select value={branchFilter} onValueChange={setBranchFilter}>
             <SelectTrigger className="w-[200px]">
               <Building2 className="mr-2 h-4 w-4" />

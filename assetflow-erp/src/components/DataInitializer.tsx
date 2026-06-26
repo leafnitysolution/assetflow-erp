@@ -6,11 +6,11 @@ import { useTicketStore } from "@/stores/ticketStore"
 import { useUserStore } from "@/stores/userStore"
 
 export function DataInitializer({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, checkAuth, loading: authLoading } = useAuthStore()
+  const { isAuthenticated, checkAuth } = useAuthStore()
   const { fetchAssets } = useAssetStore()
   const { fetchTickets } = useTicketStore()
   const { fetchUsers } = useUserStore()
-  const [hasCheckedAuth, setHasCheckedAuth] = useState(false)
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(() => !localStorage.getItem("af-token"))
 
   // Verify stored token on mount
   useEffect(() => {
@@ -26,7 +26,7 @@ export function DataInitializer({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, fetchAssets, fetchTickets, fetchUsers])
 
-  if (!hasCheckedAuth && authLoading) {
+  if (!hasCheckedAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">

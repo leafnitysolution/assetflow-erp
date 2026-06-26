@@ -19,7 +19,14 @@ router.get('/:id', protect, async (req, res) => {
     const asset = await Assets.findById(req.params.id)
     if (!asset) return res.status(404).json({ message: 'Asset not found' })
     if (req.user.role === 'member' && String(asset.assignedTo || '') !== String(req.user.id)) {
-      return res.status(403).json({ message: 'Access denied' })
+      return res.json({
+        id: asset.id,
+        name: asset.name,
+        category: asset.category,
+        status: asset.status,
+        serialNumber: asset.serialNumber || asset.serial_number || null,
+        isLimited: true
+      })
     }
     res.json(asset)
   } catch (err) { res.status(500).json({ message: err.message }) }
